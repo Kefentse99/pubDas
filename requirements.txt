@@ -6,6 +6,7 @@ panel
 plotly
 numpy
 geopandas
+sklearn
 scikit-learn
 xgboost
 folium
