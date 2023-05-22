@@ -510,6 +510,18 @@ pn.Column(
 )
 
 
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
 # ### creating dashboard
 
 # In[37]:
@@ -520,7 +532,7 @@ template = pn.template.FastListTemplate(
     title='Yokyo Fun Olympics Website analytics', 
     sidebar=[pn.pane.Markdown("# Yokyo Fun Olympics "), 
              pn.pane.Markdown("####This complied data is sourced from the weblog files of the Yokyo Fun Olympic website"), 
-             pn.pane.PNG('olympics.png', sizing_mode='scale_both'),
+         #    pn.pane.PNG(display.Image("https://github.com/Kefentse99/pubDas/blob/60163e7fc4a8fd279c07f18f73dad27ab0f12eba/olympics.png") , sizing_mode='scale_both'),
             ],
     main=[
     pn.Row(pn.Column(bar_chart, barCat),pn.Column(chart_panel , peak_times_chart),background='White'),
