@@ -1,6 +1,11 @@
-dash==2.9.3
-hvplot==0.8.2
-pandas==1.5.3
-panel==0.14.4
-plotly==5.14.1
-scikit-learn==1.2.2
+jupyter
+dash
+hvplot
+pandas
+panel
+plotly
+numpy
+geopandas
+scikit-learn
+xgboost
+folium
