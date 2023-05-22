@@ -15,7 +15,7 @@ async function startApplication() {
   self.pyodide.globals.set("sendPatch", sendPatch);
   console.log("Loaded!");
   await self.pyodide.loadPackage("micropip");
-  const env_spec = ['https://cdn.holoviz.org/panel/0.14.4/dist/wheels/bokeh-2.4.3-py3-none-any.whl', 'https://cdn.holoviz.org/panel/0.14.4/dist/wheels/panel-0.14.4-py3-none-any.whl', 'pyodide-http==0.1.0', 'folium', 'geopandas', 'holoviews>=1.15.4', 'hvplot', 'numpy', 'pandas', 'plotly', 'xgboost']
+  const env_spec = ['https://cdn.holoviz.org/panel/0.14.4/dist/wheels/bokeh-2.4.3-py3-none-any.whl', 'https://cdn.holoviz.org/panel/0.14.4/dist/wheels/panel-0.14.4-py3-none-any.whl', 'pyodide-http==0.1.0', 'folium', 'geopandas', 'holoviews>=1.15.4', 'hvplot', 'numpy', 'pandas', 'plotly']
   for (const pkg of env_spec) {
     let pkg_name;
     if (pkg.endsWith('.whl')) {
@@ -132,106 +132,95 @@ bar_chart  = pn.pane.Plotly(fig4)
 
 # ### Peak Viewing Times Prediction 
 
+# import xgboost as xgb
+
+# df.columns
+# 
+
+# # Create a feature matrix X and target variable y
+# X = df[['Hour']]
+# y = df['Hour']
+
+# train_ratio = 0.8  # 80% of data for training, 20% for testing
+# train_size = int(len(X) * train_ratio)
+# 
+# X_train = X[:train_size]
+# y_train = y[:train_size]
+# X_test = X[train_size:]
+
+# model = xgb.XGBRegressor()
+# model.fit(X_train, y_train)
+
+# y_pred = model.predict(X_test)
+# predictions = pd.Series(y_pred, index=X_test.index)
+
+# line_data = pd.concat([y, predictions], axis=1)
+# line_data.columns = ['Current View Times', 'Predicted View Times']
+# line_plot = line_data.hvplot.line()
+# 
+# # Create a Panel object for the line plot
+# panel_line_plot = pn.panel(line_plot)
+
+# # Create line data with current and predicted view times
+# line_data = pd.concat([y, predictions], axis=1)
+# line_data.columns = ['Current View Times', 'Predicted View Times']
+# 
+
+# # Create a trace for current view times
+# trace_current = go.Scatter(x=line_data.index, y=line_data['Current View Times'], name='Current View Times')
+# 
+# # Create a trace for predicted view times
+# trace_predicted = go.Scatter(x=line_data.index, y=line_data['Predicted View Times'], name='Predicted View Times')
+# 
+# # Create data list with both traces
+# data = [trace_current, trace_predicted]
+# 
+# # Create layout
+# layout = go.Layout(
+#     title='Current and Predicted View Times',
+#     xaxis=dict(title='Index'),
+#     yaxis=dict(title='View Times')
+# )
+# 
+# # Create figure
+# fig6 = go.Figure(data=data, layout=layout)
+# 
+# # Create Panel object for the line plot
+# peak_times_chart = pn.pane.Plotly(fig6)
+# 
+# 
+
 # In[9]:
-
-
-import xgboost as xgb
-
-
-# In[10]:
-
-
-df.columns
-
-
-# In[11]:
-
-
-# Create a feature matrix X and target variable y
-X = df[['Hour']]
-y = df['Hour']
-
-
-# In[12]:
-
-
-train_ratio = 0.8  # 80% of data for training, 20% for testing
-train_size = int(len(X) * train_ratio)
-
-X_train = X[:train_size]
-y_train = y[:train_size]
-X_test = X[train_size:]
-
-
-# In[13]:
-
-
-model = xgb.XGBRegressor()
-model.fit(X_train, y_train)
-
-
-# In[14]:
-
-
-y_pred = model.predict(X_test)
-predictions = pd.Series(y_pred, index=X_test.index)
-
-
-# In[15]:
-
-
-line_data = pd.concat([y, predictions], axis=1)
-line_data.columns = ['Current View Times', 'Predicted View Times']
-line_plot = line_data.hvplot.line()
-
-# Create a Panel object for the line plot
-panel_line_plot = pn.panel(line_plot)
-
-
-# In[16]:
-
-
-# Create line data with current and predicted view times
-line_data = pd.concat([y, predictions], axis=1)
-line_data.columns = ['Current View Times', 'Predicted View Times']
-
-
-# In[17]:
-
-
-# Create a trace for current view times
-trace_current = go.Scatter(x=line_data.index, y=line_data['Current View Times'], name='Current View Times')
-
-# Create a trace for predicted view times
-trace_predicted = go.Scatter(x=line_data.index, y=line_data['Predicted View Times'], name='Predicted View Times')
-
-# Create data list with both traces
-data = [trace_current, trace_predicted]
-
-# Create layout
-layout = go.Layout(
-    title='Current and Predicted View Times',
-    xaxis=dict(title='Index'),
-    yaxis=dict(title='View Times')
-)
-
-# Create figure
-fig6 = go.Figure(data=data, layout=layout)
-
-# Create Panel object for the line plot
-peak_times_chart = pn.pane.Plotly(fig6)
-
-
-# In[18]:
 
 
 #peak_times = df['Hour'].value_counts().sort_index()
 #peak_times_chart = peak_times.hvplot.line(xlabel='Hour', ylabel='Visits', title='Peak View Times')
 
+# Data preprocessing
+df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+df['Hour'] = df['Timestamp'].dt.hour
+
+# Calculate the peak view times
+peak_times = df['Hour'].value_counts().sort_index()
+
+# Create a line plot using Plotly
+fig6 = go.Figure(data=go.Scatter(x=peak_times.index, y=peak_times.values, mode='lines'))
+
+# Set plot labels and title
+fig6.update_layout(xaxis_title='Hour', yaxis_title='Visits', title='Peak View Times')
+
+peak_times_chart = pn.pane.Plotly(fig6)
+
+
+# In[ ]:
+
+
+
+
 
 # ### Status Codes by Page
 
-# In[19]:
+# In[10]:
 
 
 # Compute value counts
@@ -239,14 +228,14 @@ value_counts = df['Response Code'].value_counts().reset_index()
 value_counts.columns = ['Response Code', 'Count']
 
 
-# In[20]:
+# In[11]:
 
 
 # Create the pie chart
 fig = px.pie(value_counts, values='Count', names='Response Code' , title='RESPONSE CODE BREAKDOWN')
 
 
-# In[21]:
+# In[12]:
 
 
 chart_panel = pn.pane.Plotly(fig)
@@ -254,13 +243,13 @@ chart_panel = pn.pane.Plotly(fig)
 
 # ### SPORTS CATEGORIES 
 
-# In[22]:
+# In[13]:
 
 
 df['Requested URL'].unique()
 
 
-# In[23]:
+# In[14]:
 
 
 # Define a dictionary to map page names to sports categories
@@ -284,20 +273,20 @@ sports_categories = {
 }
 
 
-# In[24]:
+# In[15]:
 
 
 # Create a new column 'Sports Category' by mapping the page names
 df['Sports Category'] = df['Requested URL'].map(sports_categories)
 
 
-# In[25]:
+# In[16]:
 
 
 mostCat = df['Sports Category'].value_counts()
 
 
-# In[26]:
+# In[17]:
 
 
 fig2 = px.bar(mostCat, orientation='h')
@@ -306,13 +295,13 @@ fig2.update_layout(xaxis_title='Visits', yaxis_title='Sports Category', title='M
 barCat = pn.pane.Plotly(fig2)
 
 
-# In[27]:
+# In[18]:
 
 
 #barCat = most_visited.hvplot.barh(xlabel='Sports Category', ylabel='Visits', title='Most Viewed Categories')
 
 
-# In[28]:
+# In[19]:
 
 
 df.head(3)
@@ -320,7 +309,7 @@ df.head(3)
 
 # ### Most viewed Per country 
 
-# In[29]:
+# In[20]:
 
 
 # renaming countries to merge with world data
@@ -330,28 +319,28 @@ df['CountryName']=np.where(df['CountryName']=='United States','United States of 
 df['CountryName']=np.where(df['CountryName']=='Dominica','Dominican Rep.',df['CountryName'])
 
 
-# In[30]:
+# In[21]:
 
 
 # Group the data by 'Country' and 'RequestedPage', and count the occurrences
 highCountry = df.groupby(['CountryName', 'Requested URL']).size().reset_index(name='Count2')
 
 
-# In[31]:
+# In[22]:
 
 
 # Sort the data by count in descending order within each country group
 highCountry_sorted = highCountry.sort_values(['CountryName' , 'Count2'], ascending=[True, False])
 
 
-# In[32]:
+# In[23]:
 
 
 # Get the most visited page for each country
 pageCountry = highCountry_sorted.groupby('CountryName').first()
 
 
-# In[33]:
+# In[24]:
 
 
 pageCountry.head()
@@ -359,7 +348,7 @@ pageCountry.head()
 
 # ## country level view
 
-# In[34]:
+# In[25]:
 
 
 ### reading country level data from geopandas for country boundaries
@@ -369,14 +358,14 @@ print("Dataset Size : ", world.shape)
 world.head()
 
 
-# In[35]:
+# In[26]:
 
 
 ##checking country name not present in world data
 set(df['CountryName'].unique())-set(world['name'].unique())
 
 
-# In[36]:
+# In[27]:
 
 
 # renaming countries to merge with world data
@@ -386,20 +375,20 @@ df['CountryName']=np.where(df['CountryName']=='United States','United States of 
 df['CountryName']=np.where(df['CountryName']=='Dominica','Dominican Rep.',df['CountryName'])
 
 
-# In[37]:
+# In[28]:
 
 
 # Calculate the sum of country counts
 country_counts = df['CountryName'].value_counts()
 
 
-# In[38]:
+# In[29]:
 
 
 country_counts.head()
 
 
-# In[39]:
+# In[30]:
 
 
 # Merge the country counts with the geospatial data
@@ -407,19 +396,19 @@ world = world.merge(country_counts, how='left', left_on='name', right_index=True
 world['Count'] = world['CountryName'].fillna(0).astype(int)
 
 
-# In[40]:
+# In[31]:
 
 
 world = world.merge(pageCountry, how='left', left_on='name', right_index=True)
 
 
-# In[41]:
+# In[32]:
 
 
 world.head()
 
 
-# In[42]:
+# In[33]:
 
 
 ## plotting map with folium
@@ -443,7 +432,7 @@ folium.Choropleth(
 ).add_to(urban_area_map)
 
 
-# In[43]:
+# In[34]:
 
 
 style_function = lambda x: {'fillColor': '#ffffff', 
@@ -456,7 +445,7 @@ highlight_function = lambda x: {'fillColor': '#000000',
                                 'weight': 0.1}
 
 
-# In[44]:
+# In[35]:
 
 
 NIL = folium.features.GeoJson(
@@ -510,7 +499,7 @@ urban_area_map
 #     pn.Row(tabs2),width_policy='max', height_policy='max'
 # )
 
-# In[45]:
+# In[36]:
 
 
 pn.Column(
@@ -523,7 +512,7 @@ pn.Column(
 
 # ### creating dashboard
 
-# In[46]:
+# In[37]:
 
 
 #Layout using Template
@@ -544,17 +533,11 @@ template = pn.template.FastListTemplate(
 )
 
 
-# In[47]:
+# In[38]:
 
 
 #template.show()
 template.servable();
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:
