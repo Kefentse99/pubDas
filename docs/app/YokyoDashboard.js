@@ -76,10 +76,7 @@ pn.extension('tabulator')
 # In[2]:
 
 
-#https://raw.githubusercontent.com/Kefentse99/dasboard/main/finalDataset.csv
-
-
-url = 'https://raw.githubusercontent.com/Kefentse99/dasboard/main/finalDataset.csv'
+url = 'https://raw.githubusercontent.com/Kefentse99/pubDas/main/finalDataset.csv'
 df = pd.read_csv(url)
 
 
@@ -113,88 +110,19 @@ idf = df.interactive()
 # In[6]:
 
 
-most_visited = df['Requested URL'].value_counts().head(10)
+most_visited = df['Requested URL'].value_counts()
 
 
 # In[7]:
 
 
 fig4 = px.bar(most_visited)
-fig4.update_layout(xaxis_title='Visits', yaxis_title='Sports', title='Top 10 Sporting Codes')
+fig4.update_layout(xaxis_title='Visits', yaxis_title='Sports', title='Visits Per Sporting Code')
 bar_chart  = pn.pane.Plotly(fig4)
 
 
 # In[8]:
 
-
-#bar_chart = most_visited.hvplot.bar(xlabel='Requested URL', ylabel='Visits', title='Most Visited Pages')
-
-
-# ### Peak Viewing Times Prediction 
-
-# import xgboost as xgb
-
-# df.columns
-# 
-
-# # Create a feature matrix X and target variable y
-# X = df[['Hour']]
-# y = df['Hour']
-
-# train_ratio = 0.8  # 80% of data for training, 20% for testing
-# train_size = int(len(X) * train_ratio)
-# 
-# X_train = X[:train_size]
-# y_train = y[:train_size]
-# X_test = X[train_size:]
-
-# model = xgb.XGBRegressor()
-# model.fit(X_train, y_train)
-
-# y_pred = model.predict(X_test)
-# predictions = pd.Series(y_pred, index=X_test.index)
-
-# line_data = pd.concat([y, predictions], axis=1)
-# line_data.columns = ['Current View Times', 'Predicted View Times']
-# line_plot = line_data.hvplot.line()
-# 
-# # Create a Panel object for the line plot
-# panel_line_plot = pn.panel(line_plot)
-
-# # Create line data with current and predicted view times
-# line_data = pd.concat([y, predictions], axis=1)
-# line_data.columns = ['Current View Times', 'Predicted View Times']
-# 
-
-# # Create a trace for current view times
-# trace_current = go.Scatter(x=line_data.index, y=line_data['Current View Times'], name='Current View Times')
-# 
-# # Create a trace for predicted view times
-# trace_predicted = go.Scatter(x=line_data.index, y=line_data['Predicted View Times'], name='Predicted View Times')
-# 
-# # Create data list with both traces
-# data = [trace_current, trace_predicted]
-# 
-# # Create layout
-# layout = go.Layout(
-#     title='Current and Predicted View Times',
-#     xaxis=dict(title='Index'),
-#     yaxis=dict(title='View Times')
-# )
-# 
-# # Create figure
-# fig6 = go.Figure(data=data, layout=layout)
-# 
-# # Create Panel object for the line plot
-# peak_times_chart = pn.pane.Plotly(fig6)
-# 
-# 
-
-# In[9]:
-
-
-#peak_times = df['Hour'].value_counts().sort_index()
-#peak_times_chart = peak_times.hvplot.line(xlabel='Hour', ylabel='Visits', title='Peak View Times')
 
 # Data preprocessing
 df['Timestamp'] = pd.to_datetime(df['Timestamp'])
@@ -212,15 +140,9 @@ fig6.update_layout(xaxis_title='Hour', yaxis_title='Visits', title='Peak View Ti
 peak_times_chart = pn.pane.Plotly(fig6)
 
 
-# In[ ]:
-
-
-
-
-
 # ### Status Codes by Page
 
-# In[10]:
+# In[9]:
 
 
 # Compute value counts
@@ -228,14 +150,14 @@ value_counts = df['Response Code'].value_counts().reset_index()
 value_counts.columns = ['Response Code', 'Count']
 
 
-# In[11]:
+# In[10]:
 
 
 # Create the pie chart
 fig = px.pie(value_counts, values='Count', names='Response Code' , title='RESPONSE CODE BREAKDOWN')
 
 
-# In[12]:
+# In[11]:
 
 
 chart_panel = pn.pane.Plotly(fig)
@@ -243,13 +165,13 @@ chart_panel = pn.pane.Plotly(fig)
 
 # ### SPORTS CATEGORIES 
 
-# In[13]:
+# In[12]:
 
 
 df['Requested URL'].unique()
 
 
-# In[14]:
+# In[13]:
 
 
 # Define a dictionary to map page names to sports categories
@@ -273,20 +195,20 @@ sports_categories = {
 }
 
 
-# In[15]:
+# In[14]:
 
 
 # Create a new column 'Sports Category' by mapping the page names
 df['Sports Category'] = df['Requested URL'].map(sports_categories)
 
 
-# In[16]:
+# In[15]:
 
 
 mostCat = df['Sports Category'].value_counts()
 
 
-# In[17]:
+# In[16]:
 
 
 fig2 = px.bar(mostCat, orientation='h')
@@ -295,13 +217,13 @@ fig2.update_layout(xaxis_title='Visits', yaxis_title='Sports Category', title='M
 barCat = pn.pane.Plotly(fig2)
 
 
-# In[18]:
+# In[17]:
 
 
 #barCat = most_visited.hvplot.barh(xlabel='Sports Category', ylabel='Visits', title='Most Viewed Categories')
 
 
-# In[19]:
+# In[18]:
 
 
 df.head(3)
@@ -309,7 +231,7 @@ df.head(3)
 
 # ### Most viewed Per country 
 
-# In[20]:
+# In[19]:
 
 
 # renaming countries to merge with world data
@@ -319,28 +241,28 @@ df['CountryName']=np.where(df['CountryName']=='United States','United States of 
 df['CountryName']=np.where(df['CountryName']=='Dominica','Dominican Rep.',df['CountryName'])
 
 
-# In[21]:
+# In[20]:
 
 
 # Group the data by 'Country' and 'RequestedPage', and count the occurrences
 highCountry = df.groupby(['CountryName', 'Requested URL']).size().reset_index(name='Count2')
 
 
-# In[22]:
+# In[21]:
 
 
 # Sort the data by count in descending order within each country group
 highCountry_sorted = highCountry.sort_values(['CountryName' , 'Count2'], ascending=[True, False])
 
 
-# In[23]:
+# In[22]:
 
 
 # Get the most visited page for each country
 pageCountry = highCountry_sorted.groupby('CountryName').first()
 
 
-# In[24]:
+# In[23]:
 
 
 pageCountry.head()
@@ -348,7 +270,7 @@ pageCountry.head()
 
 # ## country level view
 
-# In[25]:
+# In[24]:
 
 
 ### reading country level data from geopandas for country boundaries
@@ -358,14 +280,14 @@ print("Dataset Size : ", world.shape)
 world.head()
 
 
-# In[26]:
+# In[25]:
 
 
 ##checking country name not present in world data
 set(df['CountryName'].unique())-set(world['name'].unique())
 
 
-# In[27]:
+# In[26]:
 
 
 # renaming countries to merge with world data
@@ -375,20 +297,20 @@ df['CountryName']=np.where(df['CountryName']=='United States','United States of 
 df['CountryName']=np.where(df['CountryName']=='Dominica','Dominican Rep.',df['CountryName'])
 
 
-# In[28]:
+# In[27]:
 
 
 # Calculate the sum of country counts
 country_counts = df['CountryName'].value_counts()
 
 
-# In[29]:
+# In[28]:
 
 
 country_counts.head()
 
 
-# In[30]:
+# In[29]:
 
 
 # Merge the country counts with the geospatial data
@@ -396,19 +318,19 @@ world = world.merge(country_counts, how='left', left_on='name', right_index=True
 world['Count'] = world['CountryName'].fillna(0).astype(int)
 
 
-# In[31]:
+# In[30]:
 
 
 world = world.merge(pageCountry, how='left', left_on='name', right_index=True)
 
 
-# In[32]:
+# In[31]:
 
 
 world.head()
 
 
-# In[33]:
+# In[32]:
 
 
 ## plotting map with folium
@@ -432,7 +354,7 @@ folium.Choropleth(
 ).add_to(urban_area_map)
 
 
-# In[34]:
+# In[33]:
 
 
 style_function = lambda x: {'fillColor': '#ffffff', 
@@ -445,7 +367,7 @@ highlight_function = lambda x: {'fillColor': '#000000',
                                 'weight': 0.1}
 
 
-# In[35]:
+# In[34]:
 
 
 NIL = folium.features.GeoJson(
@@ -465,41 +387,7 @@ folium.LayerControl().add_to(urban_area_map)
 urban_area_map
 
 
-# In[ ]:
-
-
-
-
-
-# # create widget
-# tabs = pn.Tabs()#(background='White')
-# tabs.extend([('Sports Group',world_year_pipeline_plot),
-#              ('By Gender Worldwide Suicides & GDP per capita',world_year_gender_pipeline),
-#             ('By Age Worldwide Suicides & GDP per capita',world_year_age_pipeline)
-#             ])
-# 
-# tabs2 = pn.Tabs()
-# tabs2.extend([('Country wise Suicide per 100k People',country_level_agg_plot),
-#              ('Suicides by Country & Gender',country_gender_year_plot),
-#             ('Suicides by Country & Age',country_age_year_plot)
-#             ])
-# 
-# 
-
-# bar_chart
-# response_codes_chart
-# urban_area_map 
-# peak_times_chart 
-
-# pn.Column(
-#     pn.Row(pn.Column(tabs),pn.Column(pn.Row(world_gender_pipeline_plot),pn.Row(world_age_pipeline_plot))),
-#     pn.Spacer(width=50),
-#     pn.Row(pn.panel(urban_area_map,height=600)),
-#     pn.Row(country_stats),
-#     pn.Row(tabs2),width_policy='max', height_policy='max'
-# )
-
-# In[36]:
+# In[35]:
 
 
 pn.Column(
@@ -510,21 +398,9 @@ pn.Column(
 )
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
 # ### creating dashboard
 
-# In[37]:
+# In[39]:
 
 
 #Layout using Template
@@ -532,7 +408,7 @@ template = pn.template.FastListTemplate(
     title='Yokyo Fun Olympics Website analytics', 
     sidebar=[pn.pane.Markdown("# Yokyo Fun Olympics "), 
              pn.pane.Markdown("####This complied data is sourced from the weblog files of the Yokyo Fun Olympic website"), 
-         #    pn.pane.PNG(display.Image("https://github.com/Kefentse99/pubDas/blob/60163e7fc4a8fd279c07f18f73dad27ab0f12eba/olympics.png") , sizing_mode='scale_both'),
+           #  pn.pane.PNG("olympics.png", sizing_mode='scale_both'),
             ],
     main=[
     pn.Row(pn.Column(bar_chart, barCat),pn.Column(chart_panel , peak_times_chart),background='White'),
@@ -545,7 +421,7 @@ template = pn.template.FastListTemplate(
 )
 
 
-# In[38]:
+# In[40]:
 
 
 #template.show()
