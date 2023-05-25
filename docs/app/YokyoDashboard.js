@@ -176,7 +176,7 @@ df['Requested URL'].unique()
 
 # Define a dictionary to map page names to sports categories
 sports_categories = {
-    'marathons': 'athletics',
+    'marathons': 'Athletics',
     'basketball': 'Ball Sports', 
     'football': 'Ball Sports',
     'hockey': 'Ball Sports',
@@ -400,7 +400,7 @@ pn.Column(
 
 # ### creating dashboard
 
-# In[39]:
+# In[ ]:
 
 
 #Layout using Template
@@ -421,7 +421,7 @@ template = pn.template.FastListTemplate(
 )
 
 
-# In[40]:
+# In[ ]:
 
 
 #template.show()
