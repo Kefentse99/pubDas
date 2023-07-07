@@ -1,2 +1,2 @@
 # pubDas
-Yokyo Web Analytics 
+Web analytics dashboard 
